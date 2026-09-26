@@ -1,4 +1,4 @@
-const CACHE_NAME = "makimaki-tools-v3";
+const CACHE_NAME = "makimaki-tools-v4";
 
 const APP_SHELL = [
     "./",
@@ -47,12 +47,18 @@ self.addEventListener("fetch", (event) => {
     }
 
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
+        fetch(event.request)
+            .then((response) => {
+                const responseClone = response.clone();
 
-            return fetch(event.request);
-        })
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseClone);
+                });
+
+                return response;
+            })
+            .catch(() => {
+                return caches.match(event.request);
+            })
     );
 });
