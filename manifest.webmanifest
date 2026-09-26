@@ -1,40 +1,117 @@
 {
-  "name": "マキマキツール",
-  "short_name": "マキマキ",
-  "description": "ゲーム・Blueskyフィード・アンケート・プライベート投稿をまとめたツール",
-  "lang": "ja",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#f7f7f7",
-  "theme_color": "#ffffff",
-  "icons": [
-    {
-      "src": "./icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "./icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "おはにげ",
-      "short_name": "おはにげ",
-      "url": "./games/ohaginige/"
-    },
-    {
-      "name": "おはぎDROP",
-      "short_name": "DROP",
-      "url": "./games/ohagidoro/"
-    },
-    {
-      "name": "おはぎKISS",
-      "short_name": "KISS",
-      "url": "./games/ohakiss/"
-    }
-  ]
+    "name": "マキマキツール",
+    "short_name": "マキマキ",
+    "description": "ゲーム・Blueskyフィード・アンケート・プライベート投稿をまとめたツール",
+    "lang": "ja",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f7f7f7",
+    "theme_color": "#ffffff",
+    "icons": [
+        {
+            "src": "./icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "おはにげ",
+            "short_name": "おはにげ",
+            "url": "./games/ohaginige/"
+        },
+        {
+            "name": "おはぎDROP",
+            "short_name": "DROP",
+            "url": "./games/ohagidoro/"
+        },
+        {
+            "name": "おはぎKISS",
+            "short_name": "KISS",
+            "url": "./games/ohakiss/"
+        }
+    ]
+}
+
+
+{
+    "id": "/index.html",
+    "name": "マキマキツール",
+    "short_name": "マキマキ",
+    "description": "ゲーム・Blueskyフィード・アンケート・プライベート投稿をまとめたツール",
+    "lang": "ja",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f7f7f7",
+    "theme_color": "#ffffff",
+    "icons": [
+        {
+            "src": "./icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "./images/pwa-mobile.png",
+            "sizes": "1080x1920",
+            "type": "image/png"
+        },
+        {
+            "src": "./images/pwa-wide.png",
+            "sizes": "1600x900",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "おはにげ",
+            "short_name": "おはにげ",
+            "url": "./games/ohaginige/",
+            "icons": [
+                {
+                    "src": "./icons/shortcut-ohaginige.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "おはぎDROP",
+            "short_name": "DROP",
+            "url": "./games/ohagidoro/",
+            "icons": [
+                {
+                    "src": "./icons/shortcut-drop.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "おはぎKISS",
+            "short_name": "KISS",
+            "url": "./games/ohakiss/",
+            "icons": [
+                {
+                    "src": "./icons/shortcut-kiss.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ]
 }

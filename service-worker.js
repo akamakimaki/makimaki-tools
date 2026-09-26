@@ -1,53 +1,58 @@
-const CACHE_NAME = "makimaki-tools-v2";
+const CACHE_NAME = "makimaki-tools-v3";
 
 const APP_SHELL = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./app.js",
-  "./manifest.webmanifest",
-  "./policy.html",
-  "./images/header.png",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
+    "./",
+    "./index.html",
+    "./style.css",
+    "./app.js",
+    "./manifest.webmanifest",
+    "./policy.html",
+    "./images/header.png",
+    "./icons/icon-192.png",
+    "./icons/icon-512.png",
+    "./images/pwa-mobile.png",
+    "./images/pwa-wide.png",
+    "./icons/shortcut-ohaginige.png",
+    "./icons/shortcut-drop.png",
+    "./icons/shortcut-kiss.png"
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_SHELL);
-    })
-  );
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(APP_SHELL);
+        })
+    );
 
-  self.skipWaiting();
+    self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((cacheName) => cacheName !== CACHE_NAME)
-          .map((cacheName) => caches.delete(cacheName))
-      );
-    })
-  );
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter((cacheName) => cacheName !== CACHE_NAME)
+                    .map((cacheName) => caches.delete(cacheName))
+            );
+        })
+    );
 
-  self.clients.claim();
+    self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
-    return;
-  }
+    if (event.request.method !== "GET") {
+        return;
+    }
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+    event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+                return cachedResponse;
+            }
 
-      return fetch(event.request);
-    })
-  );
+            return fetch(event.request);
+        })
+    );
 });
