@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>マキマキツール</title>
+
+    <meta name="description" content="ゲーム・Blueskyフィード・アンケート・プライベート投稿をまとめたマキマキツール">
+
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="stylesheet" href="./style.css">
+
+    <link rel="icon" href="./icons/icon-192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192.png">
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <header class="site-header">
+            <div class="brand">
+                <a class="brand-logo" href="./" aria-label="マキマキツール ホーム">
+                    <img src="./images/header.png" alt="マキマキツール">
+                </a>
+            </div>
+        </header>
+
+        <main>
+
+            <section class="game-section" aria-labelledby="games-title">
+
+                <div class="section-heading">
+                    <span class="section-icon" aria-hidden="true">🎮</span>
+                    <span class="section-label">GAME</span>
+                    <h2 id="games-title">ゲーム</h2>
+                </div>
+
+                <div class="game-grid">
+
+                    <!-- おはにげ -->
+                    <a class="game-card" href="./games/ohaginige/">
+                        <div class="game-visual">
+                            <img class="game-character" src="./images/giyu-normal.png" alt="" aria-hidden="true">
+                        </div>
+
+                        <div class="game-card-footer">
+                            <span>おはぎから逃げろ！</span>
+                            <span aria-hidden="true">→</span>
+                        </div>
+                    </a>
+
+
+                    <!-- おはぎDROP -->
+                    <a class="game-card" href="./games/ohagidoro/">
+                        <div class="game-visual">
+                            <img class="game-character" src="./images/ohagi-drop.png" alt="" aria-hidden="true">
+
+                            <img class="game-title-logo" src="./images/title-drop.png" alt="おはぎDROP">
+                        </div>
+
+                        <div class="game-card-footer">
+                            <span>おはぎDROP</span>
+                            <span aria-hidden="true">→</span>
+                        </div>
+                    </a>
+
+
+                    <!-- おはぎKISS -->
+                    <a class="game-card" href="./games/ohakiss/">
+                        <div class="game-visual">
+                            <img class="game-character" src="./images/ohagi-kiss-giyusane.png" alt=""
+                                aria-hidden="true">
+
+                            <img class="game-title-logo" src="./images/title-kiss.png" alt="おはぎKISS">
+                        </div>
+
+                        <div class="game-card-footer">
+                            <span>おはぎKISS</span>
+                            <span aria-hidden="true">→</span>
+                        </div>
+                    </a>
+
+                </div>
+                </a>
+
+    </div>
+    </section>
+
+    <section class="tool-section" aria-labelledby="bluesky-title">
+        <div class="section-heading">
+            <span class="section-icon" aria-hidden="true">🦋</span>
+            <h2 id="bluesky-title">Bluesky</h2>
+        </div>
+
+        <div class="tool-grid">
+
+            <a class="tool-card" href="https://bsky.app/profile/did:plc:slon4uo2n45pfsvjqwv6tuft/feed/giyusane-feed"
+                id="feed-link" target="_blank" rel="noopener noreferrer">
+                <div class="tool-card-icon" aria-hidden="true">📰</div>
+
+                <div class="tool-card-body">
+                    <h3>フィード</h3>
+                    <p>カスタムフィード一覧</p>
+                </div>
+
+                <span class="tool-card-arrow" aria-hidden="true">›</span>
+            </a>
+
+            <a class="tool-card" href="https://poll.makimaki-feed.net/" id="poll-link" target="_blank"
+                rel="noopener noreferrer">
+                <div class="tool-card-icon" aria-hidden="true">📊</div>
+
+                <div class="tool-card-body">
+                    <h3>アンケート</h3>
+                    <p>ログイン不要の投票ツール</p>
+                </div>
+
+                <span class="tool-card-arrow" aria-hidden="true">›</span>
+            </a>
+
+            <a class="tool-card" href="https://private.makimaki-feed.net/private" id="private-link">
+                <div class="tool-card-icon" aria-hidden="true">🔒</div>
+
+                <div class="tool-card-body">
+                    <h3>プライベート投稿</h3>
+                    <p>限定公開用の投稿ツール</p>
+                </div>
+
+                <span class="tool-card-arrow" aria-hidden="true">›</span>
+            </a>
+
+        </div>
+    </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <a href="./policy.html">プライバシーポリシー</a>
+    </footer>
+
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おはぎから逃げろ！</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f3efe7;
+            font-family: sans-serif;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #game {
+            position: relative;
+
+            width: min(100vw, 75vh);
+            height: min(100vh, 133.33vw);
+
+            margin: 0 auto;
+
+            overflow: hidden;
+
+
+            background: linear-gradient(#ffffff80, #ffffff80),
+                repeating-linear-gradient(0deg,
+                    #ddd 0px,
+                    #ddd 1px,
+                    transparent 1px,
+                    transparent 50px),
+                repeating-linear-gradient(90deg,
+                    #ddd 0px,
+                    #ddd 1px,
+                    transparent 1px,
+                    transparent 50px);
+        }
+
+        @media (max-width: 600px) {
+            #game {
+                width: min(100vw, 56.25vh);
+                height: min(100vh, 177.78vw);
+            }
+        }
+
+        #score {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 10;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #player {
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        #player img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .ohagi {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 28px;
+
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .ohagi.fast {
+            font-size: 24px;
+        }
+
+        .ohagi.giant {
+            width: 76px;
+            height: 76px;
+            font-size: 68px;
+        }
+
+        #gameOver {
+            display: none;
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+            padding: 24px 18px;
+            background: rgba(45, 40, 35, 0.45);
+            color: white;
+
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        #gameOver h1 {
+            margin: 0 0 14px;
+            font-size: 30px;
+            font-weight: 900;
+            line-height: 1.15;
+            text-shadow:
+                0 2px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        #result {
+            margin: 0 0 14px;
+            font-size: 42px;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        #privateScoreArea {
+            width: min(100%, 200px);
+            margin: 0 auto 12px;
+            text-align: center;
+        }
+
+        #rankingName {
+            box-sizing: border-box;
+            width: 100%;
+            height: 36px;
+            margin: 0 0 8px;
+            padding: 0 12px;
+
+            border: 0;
+            border-radius: 999px;
+
+            background: rgba(255, 255, 255, 0.94);
+            color: #3b3029;
+
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+
+            outline: none;
+
+            box-shadow:
+                0 2px 6px rgba(0, 0, 0, 0.18);
+        }
+
+        #rankingName:focus {
+            box-shadow:
+                inset 0 0 0 2px #7a9f68;
+        }
+
+        #rankingLoginHint {
+            margin: -2px 0 7px;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 8px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        #rankingSubmitBtn {
+            width: 100%;
+            height: 36px;
+            margin: 0 0 7px;
+            padding: 0;
+
+            border: 0;
+            border-radius: 999px;
+
+            background: #7a9f68;
+            color: #fff;
+
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 900;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #rankingSubmitBtn:active {
+            transform: translateY(2px);
+            box-shadow:
+                0 1px 0 rgba(62, 82, 52, 0.4);
+        }
+
+        #rankingSubmitBtn:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        #rankingSubmitBtn.is-saved:disabled {
+            background: #5f8750;
+            opacity: 1;
+        }
+
+        #personalHistoryBtn {
+            display: inline-block;
+
+            width: auto;
+            height: auto;
+
+            margin: 0;
+            padding: 2px 4px;
+
+            border: 0;
+            background: transparent;
+
+            color: rgba(255, 255, 255, 0.95);
+
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 800;
+
+            text-decoration: underline;
+            text-underline-offset: 3px;
+
+            cursor: pointer;
+        }
+
+        #rankingMessage {
+            min-height: 12px;
+            margin-top: 5px;
+
+            color: rgba(255, 255, 255, 0.88);
+
+            font-size: 9px;
+            font-weight: 700;
+
+            text-align: center;
+        }
+
+        #retryButton,
+        #shareButton {
+            width: 174px;
+            height: 36px;
+
+            margin-top: 8px;
+            padding: 0 12px;
+
+            border: 0;
+            border-radius: 999px;
+
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 900;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #retryButton {
+            background: #fffaf0;
+            color: #3b3029;
+        }
+
+        #shareButton {
+            background: #1688f8;
+            color: white;
+        }
+
+
+        button {
+            margin-top: 10px;
+            padding: 12px 22px;
+            border: 0;
+            border-radius: 999px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .giyu-warning {
+            position: absolute;
+            z-index: 30;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            pointer-events: none;
+        }
+
+        .giyu-face {
+            width: 140px;
+            height: 140px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .giyu-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .giyu-word {
+            margin-top: 4px;
+            padding: 5px 12px;
+
+            background: white;
+            border-radius: 20px;
+
+            font-size: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .warning {
+            position: absolute;
+            z-index: 25;
+
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 3px solid #d33;
+            border-radius: 50%;
+
+            color: #d33;
+            background: rgba(255, 255, 255, 0.9);
+
+            font-size: 28px;
+            font-weight: bold;
+
+            transform: translate(-50%, -50%);
+
+            animation: warningBlink 0.2s infinite alternate;
+
+            pointer-events: none;
+        }
+
+        @keyframes warningBlink {
+            from {
+                opacity: 0.35;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .warning.fast {
+            width: 46px;
+            height: 46px;
+
+            border-color: #e59600;
+            color: #e59600;
+
+            font-size: 22px;
+        }
+
+        .warning.giant {
+            width: 54px;
+            height: 54px;
+
+            border-color: #8b1e1e;
+            color: #8b1e1e;
+
+            font-size: 30px;
+
+            animation-duration: 0.12s;
+        }
+
+        .giyu-danger {
+            position: absolute;
+            z-index: 20;
+
+            background: rgba(220, 40, 40, 0.35);
+
+            pointer-events: none;
+
+            animation: dangerBlink 0.15s infinite alternate;
+        }
+
+        .giyu-danger.top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 26px;
+        }
+
+        .giyu-danger.right {
+            top: 0;
+            right: 0;
+            width: 26px;
+            height: 100%;
+        }
+
+        .giyu-danger.bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 26px;
+        }
+
+        .giyu-danger.left {
+            top: 0;
+            left: 0;
+            width: 26px;
+            height: 100%;
+        }
+
+        @keyframes dangerBlink {
+            from {
+                opacity: 0.25;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #player.hit {
+            animation: sanemiShake 0.65s cubic-bezier(0.22, 1.4, 0.36, 1);
+        }
+
+        @keyframes sanemiShake {
+            0% {
+                transform:
+                    translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(1);
+            }
+
+            /* 衝撃で一気にびくんっ */
+            12% {
+                transform:
+                    translate(-50%, -50%) translate(-15px, -14px) rotate(-12deg) scale(1.22, 0.82);
+            }
+
+            /* 反対側へ跳ね返る */
+            26% {
+                transform:
+                    translate(-50%, -50%) translate(14px, 8px) rotate(10deg) scale(0.9, 1.18);
+            }
+
+            42% {
+                transform:
+                    translate(-50%, -50%) translate(-10px, -5px) rotate(-7deg) scale(1.1, 0.92);
+            }
+
+            58% {
+                transform:
+                    translate(-50%, -50%) translate(8px, 3px) rotate(6deg) scale(0.95, 1.08);
+            }
+
+            72% {
+                transform:
+                    translate(-50%, -50%) translate(-5px, -2px) rotate(-3deg) scale(1.04);
+            }
+
+            86% {
+                transform:
+                    translate(-50%, -50%) translate(3px, 1px) rotate(2deg) scale(0.98);
+            }
+
+            100% {
+                transform:
+                    translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(1);
+            }
+        }
+
+        #player.dodge {
+            animation: sanemiDodge 0.16s ease-out;
+        }
+
+        @keyframes sanemiDodge {
+            0% {
+                transform: translate(-50%, -50%) translateX(0);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) translateX(5px);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateX(0);
+            }
+        }
+
+        /* =========================
+   スタート画面
+========================= */
+
+        #startScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #eaf4df;
+        }
+
+        #startCard {
+            width: min(270px, calc(100vw - 48px));
+            padding: 24px 18px 18px;
+
+            background: #fffdf5;
+
+            border: 1px solid rgba(80, 90, 65, 0.22);
+            border-radius: 20px;
+
+            box-shadow:
+                0 18px 38px rgba(70, 90, 55, 0.13);
+
+            text-align: center;
+        }
+
+        #startTitle {
+            margin: 0;
+
+            color: #34392f;
+
+            font-size: 24px;
+            font-weight: 900;
+            line-height: 1.25;
+        }
+
+        #startNotice {
+            margin: 7px 0 12px;
+
+            color: #858878;
+
+            font-size: 11px;
+        }
+
+        #startButton {
+            width: 100%;
+            height: 48px;
+
+            margin: 0;
+
+            border: 0;
+            border-radius: 13px;
+
+            background: #759a66;
+            color: white;
+
+            font-family: inherit;
+            font-size: 17px;
+            font-weight: 900;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 5px 0 #527546;
+        }
+
+        #startButton:active {
+            transform: translateY(3px);
+            box-shadow:
+                0 2px 0 #527546;
+        }
+
+        #startCredit {
+            margin: 13px 0 0;
+
+            color: #aaa99e;
+
+            font-size: 9px;
+            text-align: left;
+        }
+
+        /* ランキングサイトへ移動して登録するため、旧ログイン欄は非表示 */
+        #rankingName,
+        #rankingLoginHint,
+        #rankingMessage {
+            display: none !important;
+        }
+    </style>
+
+    <meta property="og:title" content="おはぎから逃げろ！">
+    <meta property="og:description" content="🌊の🟤攻撃をかわし続けろ！">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://akamakimaki.github.io/ohagi-escape/">
+    <meta property="og:image" content="https://akamakimaki.github.io/ohagi-escape/images/title.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body>
+
+    <body>
+
+        <div id="startScreen">
+            <div id="startCard">
+
+                <h1 id="startTitle">
+                    おはぎから逃げろ！
+                </h1>
+
+                <p id="startNotice">
+                    音が出ます
+                </p>
+
+                <button id="startButton" type="button">
+                    はじめる
+                </button>
+
+                <p id="startCredit">
+                    BGM「OHAGI」 提供：みなさん
+                </p>
+
+            </div>
+        </div>
+
+        <div id="game">
+
+            <div id="game">
+
+                <div id="score">
+                    かわしたおはぎ：0
+                </div>
+
+                <div id="player">
+                    <img src="images/sanemi.png" alt="実弥">
+                </div>
+
+                <div id="gameOver">
+                    <h1>食わされたァ</h1>
+                    <p id="result"></p>
+
+                    <div id="privateScoreArea">
+                        <input id="rankingName" type="text" placeholder="Blueskyハンドル" maxlength="253">
+
+                        <div id="rankingLoginHint">
+                            初回のみ入力／ログイン後は入力不要です
+                        </div>
+
+                        <button id="rankingSubmitBtn" type="button">
+                            この記録を登録
+                        </button>
+
+                        <button id="personalHistoryBtn" type="button">
+                            自分の記録を見る
+                        </button>
+
+                        <div id="rankingMessage"></div>
+                    </div>
+
+                    <button id="retryButton" onclick="location.reload()">
+                        もう一回
+                    </button>
+
+                    <button id="shareButton">
+                        Blueskyで結果を投稿
+                    </button>
+                </div>
+
+            </div>
+
+            <script>
+
+                const startScreen =
+                    document.getElementById("startScreen");
+
+                const startButton =
+                    document.getElementById("startButton");
+
+                const bgm =
+                    new Audio("sounds/bgm_main.wav");
+
+                bgm.loop = true;
+                bgm.preload = "auto";
+
+                const gameOverSound =
+                    new Audio("sounds/gameover.mp3");
+
+                gameOverSound.preload = "auto";
+
+                const game = document.getElementById("game");
+                const player = document.getElementById("player");
+                const scoreText = document.getElementById("score");
+                const gameOverScreen = document.getElementById("gameOver");
+                const result = document.getElementById("result");
+                const shareButton =
+                    document.getElementById("shareButton");
+
+                const rankingName =
+                    document.getElementById("rankingName");
+
+                const rankingLoginHint =
+                    document.getElementById("rankingLoginHint");
+
+                const rankingSubmitBtn =
+                    document.getElementById("rankingSubmitBtn");
+
+                const personalHistoryBtn =
+                    document.getElementById("personalHistoryBtn");
+
+                const rankingMessage =
+                    document.getElementById("rankingMessage");
+
+                let playerX = game.clientWidth / 2;
+                let playerY = game.clientHeight / 2;
+
+                let ohagis = [];
+                let score = 0;
+                let playing = false;
+
+                let startTime = 0;
+
+                function movePlayer(x, y) {
+                    const margin = 28;
+
+                    playerX = Math.max(
+                        margin,
+                        Math.min(game.clientWidth - margin, x)
+                    );
+
+                    playerY = Math.max(
+                        margin,
+                        Math.min(game.clientHeight - margin, y)
+                    );
+
+                    player.style.left = playerX + "px";
+                    player.style.top = playerY + "px";
+                }
+
+                movePlayer(playerX, playerY);
+
+                function movePlayerFromPointer(event) {
+                    const rect = game.getBoundingClientRect();
+
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+
+                    movePlayer(x, y);
+                }
+
+                game.addEventListener("pointermove", event => {
+                    if (!playing) return;
+
+                    if (event.buttons || event.pointerType === "touch") {
+                        movePlayerFromPointer(event);
+                    }
+                });
+
+                game.addEventListener("pointerdown", event => {
+                    if (!playing) return;
+
+                    movePlayerFromPointer(event);
+                });
+
+                function elapsed() {
+                    return (performance.now() - startTime) / 1000;
+                }
+
+                /* =========================
+                   おはぎ作成
+                ========================= */
+
+                function createOhagi(options = {}) {
+                    if (!playing) return;
+
+                    const el = document.createElement("div");
+                    el.className = "ohagi";
+                    el.textContent = "🟤";
+
+                    if (options.fast) {
+                        el.classList.add("fast");
+                    }
+
+                    if (options.giant) {
+                        el.classList.add("giant");
+                    }
+
+                    game.appendChild(el);
+
+                    const side =
+                        options.side ??
+                        Math.floor(Math.random() * 4);
+
+                    let x = options.x;
+                    let y = options.y;
+
+                    if (x === undefined || y === undefined) {
+                        const spawn = getSpawnPosition(side);
+
+                        x = spawn.x;
+                        y = spawn.y;
+                    }
+                    let targetX =
+                        options.targetX ??
+                        (
+                            game.clientWidth * 0.1 +
+                            Math.random() * game.clientWidth * 0.8
+                        );
+
+                    let targetY =
+                        options.targetY ??
+                        (
+                            game.clientHeight * 0.1 +
+                            Math.random() * game.clientHeight * 0.8
+                        );
+
+                    const dx = targetX - x;
+                    const dy = targetY - y;
+
+                    const length = Math.sqrt(dx * dx + dy * dy);
+
+                    let speed = 2.0 + Math.random() * 1.1;
+                    let radius = 14;
+
+                    if (options.fast) {
+                        speed = 5.0 + Math.random() * 1.2;
+                        radius = 11;
+                    }
+
+                    if (options.giant) {
+                        speed = 1.7 + Math.random() * 0.8;
+                        radius = 34;
+                    }
+
+                    if (options.speed) {
+                        speed = options.speed;
+                    }
+
+                    const vx = dx / length * speed;
+                    const vy = dy / length * speed;
+
+                    ohagis.push({
+                        el,
+                        x,
+                        y,
+                        vx,
+                        vy,
+                        radius,
+                        passed: false,
+                    });
+
+                }
+
+                /* =========================
+                   通常攻撃
+                ========================= */
+
+                function getSpawnPosition(side) {
+                    const margin = 50;
+
+                    if (side === 0) {
+                        return {
+                            x: Math.random() * game.clientWidth,
+                            y: -margin
+                        };
+                    }
+
+                    if (side === 1) {
+                        return {
+                            x: game.clientWidth + margin,
+                            y: Math.random() * game.clientHeight
+                        };
+                    }
+
+                    if (side === 2) {
+                        return {
+                            x: Math.random() * game.clientWidth,
+                            y: game.clientHeight + margin
+                        };
+                    }
+
+                    return {
+                        x: -margin,
+                        y: Math.random() * game.clientHeight
+                    };
+                }
+
+                function showWarning(x, y, delay, type = "normal") {
+                    const warning = document.createElement("div");
+
+                    warning.className = `warning ${type}`;
+
+                    if (type === "fast") {
+                        warning.textContent = "!!";
+                    } else if (type === "giant") {
+                        warning.textContent = "⚠";
+                    } else {
+                        warning.textContent = "!";
+                    }
+
+                    const inset = 24;
+
+                    let warningX = x;
+                    let warningY = y;
+
+                    if (x < 0) {
+                        warningX = inset;
+                    }
+
+                    if (x > game.clientWidth) {
+                        warningX = game.clientWidth - inset;
+                    }
+
+                    if (y < 0) {
+                        warningY = inset;
+                    }
+
+                    if (y > game.clientHeight) {
+                        warningY = game.clientHeight - inset;
+                    }
+
+                    warning.style.left = warningX + "px";
+                    warning.style.top = warningY + "px";
+
+                    game.appendChild(warning);
+
+                    setTimeout(() => {
+                        warning.remove();
+                    }, delay);
+                }
+
+                function normalAttack() {
+                    if (!playing) return;
+
+                    const roll = Math.random();
+                    const side = Math.floor(Math.random() * 4);
+                    const spawn = getSpawnPosition(side);
+
+                    const options = {
+                        side,
+                        x: spawn.x,
+                        y: spawn.y
+                    };
+
+                    let warningDelay = 450;
+                    let warningType = "normal";
+
+                    const seconds = elapsed();
+
+                    if (seconds >= 8 && roll < 0.20) {
+                        options.giant = true;
+                        warningDelay = 700;
+                        warningType = "giant";
+
+                    } else if (seconds >= 5 && roll < 0.40) {
+                        options.fast = true;
+                        warningDelay = 250;
+                        warningType = "fast";
+                    }
+
+                    showWarning(
+                        spawn.x,
+                        spawn.y,
+                        warningDelay,
+                        warningType
+                    );
+
+                    setTimeout(() => {
+                        if (!playing) return;
+
+                        createOhagi(options);
+                    }, warningDelay);
+                }
+
+
+                /* =========================
+                   時間経過で増える
+                ========================= */
+
+                function spawnLoop() {
+                    if (!playing) return;
+
+                    const seconds = elapsed();
+
+                    let count = 1;
+
+                    if (seconds > 10) {
+                        count = 2;
+                    }
+
+                    if (seconds > 25) {
+                        count = 3;
+                    }
+
+                    if (seconds > 45) {
+                        count = 4;
+                    }
+
+                    for (let i = 0; i < count; i++) {
+                        setTimeout(() => {
+                            normalAttack();
+                        }, i * 110);
+                    }
+
+                    const delay =
+                        Math.max(
+                            260,
+                            700 - seconds * 8
+                        );
+
+                    setTimeout(spawnLoop, delay);
+                }
+
+                /* =========================
+                   義勇イベント
+                ========================= */
+
+                function showGiyu(side) {
+                    const box = document.createElement("div");
+
+                    box.className = "giyu-warning";
+
+                    const giyuWords = [
+                        "不死川",
+                        "食え",
+                        "おはぎだ",
+                        "遠慮するな",
+                        "まだある",
+                        "不死川、こっちだ"
+                    ];
+
+                    const word =
+                        giyuWords[Math.floor(Math.random() * giyuWords.length)];
+
+                    box.innerHTML = `
+        <div class="giyu-face">
+            <img src="images/giyu.png" alt="義勇">
+        </div>
+        <div class="giyu-word">${word}</div>
+    `;
+
+                    if (side === 0) {
+                        box.style.top = "10px";
+                        box.style.left = "50%";
+                        box.style.transform = "translateX(-50%)";
+                    }
+
+                    if (side === 1) {
+                        box.style.right = "10px";
+                        box.style.top = "50%";
+                        box.style.transform = "translateY(-50%)";
+                    }
+
+                    if (side === 2) {
+                        box.style.bottom = "10px";
+                        box.style.left = "50%";
+                        box.style.transform = "translateX(-50%)";
+                    }
+
+                    if (side === 3) {
+                        box.style.left = "10px";
+                        box.style.top = "50%";
+                        box.style.transform = "translateY(-50%)";
+                    }
+
+                    game.appendChild(box);
+
+                    return box;
+                }
+                function showGiyuDanger(side) {
+                    const danger = document.createElement("div");
+
+                    danger.className = "giyu-danger";
+
+                    if (side === 0) {
+                        danger.classList.add("top");
+                    }
+
+                    if (side === 1) {
+                        danger.classList.add("right");
+                    }
+
+                    if (side === 2) {
+                        danger.classList.add("bottom");
+                    }
+
+                    if (side === 3) {
+                        danger.classList.add("left");
+                    }
+
+                    game.appendChild(danger);
+
+                    return danger;
+                }
+                function giyuAttack() {
+                    if (!playing) return;
+
+                    const side =
+                        Math.floor(Math.random() * 4);
+
+                    const giyu =
+                        showGiyu(side);
+
+                    const danger =
+                        showGiyuDanger(side);
+
+                    const seconds = elapsed();
+
+                    const pattern =
+                        seconds >= 8
+                            ? Math.floor(Math.random() * 3)
+                            : Math.floor(Math.random() * 2);
+                    // 0: 連射
+                    // 1: 扇状
+                    // 2: 巨大おはぎ
+
+                    const delay =
+                        pattern === 2 ? 850 : 500;
+
+                    setTimeout(() => {
+                        giyu.remove();
+                        danger.remove();
+
+                        if (!playing) return;
+
+                        if (pattern === 0) {
+                            giyuRapidFire(side);
+                        }
+
+                        if (pattern === 1) {
+                            giyuSpreadShot(side);
+                        }
+
+                        if (pattern === 2) {
+                            giyuGiantShot(side);
+                        }
+
+                    }, delay);
+                }
+
+                function giyuRapidFire(side) {
+                    for (let i = 0; i < 12; i++) {
+
+                        setTimeout(() => {
+                            if (!playing) return;
+
+                            createOhagi({
+                                side,
+
+                                targetX:
+                                    playerX +
+                                    (Math.random() - 0.5) * 250,
+
+                                targetY:
+                                    playerY +
+                                    (Math.random() - 0.5) * 250,
+
+                                speed:
+                                    3.2 + Math.random() * 1.0
+                            });
+
+                        }, i * 60);
+                    }
+                }
+
+                function giyuSpreadShot(side) {
+                    const baseX = playerX;
+                    const baseY = playerY;
+
+                    for (let i = -3; i <= 3; i++) {
+
+                        let targetX = baseX;
+                        let targetY = baseY;
+
+                        if (side === 0 || side === 2) {
+                            targetX += i * 85;
+                        }
+
+                        if (side === 1 || side === 3) {
+                            targetY += i * 85;
+                        }
+
+                        createOhagi({
+                            side,
+                            targetX,
+                            targetY,
+                            speed: 3
+                        });
+                    }
+                }
+
+                function giyuGiantShot(side) {
+                    createOhagi({
+                        side,
+                        giant: true,
+                        targetX: playerX,
+                        targetY: playerY,
+                        speed: 2.1
+                    });
+                }
+
+                function giyuLoop() {
+                    if (!playing) return;
+
+                    const next =
+                        3000 +
+                        Math.random() * 2000;
+
+                    setTimeout(() => {
+                        if (!playing) return;
+
+                        giyuAttack();
+                        giyuLoop();
+
+                    }, next);
+                }
+
+                /* =========================
+                   当たり判定
+                ========================= */
+
+                function collision(o) {
+                    const dx =
+                        playerX - o.x;
+
+                    const dy =
+                        playerY - o.y;
+
+                    const distance =
+                        Math.sqrt(
+                            dx * dx +
+                            dy * dy
+                        );
+
+                    const playerRadius = 14;
+
+                    return distance <
+                        playerRadius + o.radius;
+                }
+
+                shareButton.addEventListener("click", () => {
+                    const shareUrl =
+                        `https://ohagi-escape.makimaki-feed.net/share?score=${score}`;
+                    const text =
+                        `🌊の🟤攻撃から${score}個かわした！\n` +
+                        `でも最後は食わされたァ！！\n\n` +
+                        `${shareUrl}\n\n` +
+                        `#おはぎから逃げろ`;
+
+                    const url =
+                        "https://bsky.app/intent/compose?text=" +
+                        encodeURIComponent(text);
+                    window.open(url, "_blank");
+                });
+
+
+                const PRIVATE_SCORE_API =
+                    "https://ohagi-ranking.makimaki-feed.net";
+
+
+                async function getLoginStatus() {
+
+                    const response =
+                        await fetch(
+                            PRIVATE_SCORE_API +
+                            "/api/me",
+                            {
+                                credentials: "include"
+                            }
+                        );
+
+                    return response.ok;
+                }
+
+
+                async function updateRankingLoginUI() {
+
+                    try {
+
+                        const loggedIn =
+                            await getLoginStatus();
+
+                        rankingName.hidden =
+                            loggedIn;
+
+                        rankingLoginHint.hidden =
+                            loggedIn;
+
+                    } catch (error) {
+
+                        console.error(error);
+
+                        rankingName.hidden =
+                            false;
+
+                        rankingLoginHint.hidden =
+                            false;
+                    }
+                }
+
+
+                async function waitForBlueskyLogin(
+                    loginWindow
+                ) {
+
+                    for (
+                        let count = 0;
+                        count < 120;
+                        count += 1
+                    ) {
+
+                        await new Promise(
+                            resolve =>
+                                setTimeout(
+                                    resolve,
+                                    1000
+                                )
+                        );
+
+                        if (
+                            loginWindow &&
+                            loginWindow.closed
+                        ) {
+
+                            try {
+
+                                if (
+                                    await getLoginStatus()
+                                ) {
+                                    return true;
+                                }
+
+                            } catch (error) {
+                                console.error(error);
+                            }
+
+                            return false;
+                        }
+
+                        try {
+
+                            if (
+                                await getLoginStatus()
+                            ) {
+
+                                if (
+                                    loginWindow &&
+                                    !loginWindow.closed
+                                ) {
+                                    loginWindow.close();
+                                }
+
+                                return true;
+                            }
+
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+
+                    return false;
+                }
+
+
+                async function ensureBlueskyLogin() {
+
+                    try {
+
+                        if (
+                            await getLoginStatus()
+                        ) {
+                            return true;
+                        }
+
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    const handle =
+                        rankingName.value
+                            .trim()
+                            .replace(/^[@＠]/, "");
+
+                    if (!handle) {
+
+                        rankingMessage.textContent =
+                            "Blueskyハンドルを入力してください";
+
+                        return false;
+                    }
+
+                    const loginUrl =
+                        PRIVATE_SCORE_API +
+                        "/login?handle=" +
+                        encodeURIComponent(handle) +
+                        "&game=escape";
+
+                    const loginWindow =
+                        window.open(
+                            loginUrl,
+                            "ohagiBlueskyLogin",
+                            "width=620,height=760"
+                        );
+
+                    if (!loginWindow) {
+
+                        rankingMessage.textContent =
+                            "ログイン画面を開けませんでした";
+
+                        return false;
+                    }
+
+                    rankingMessage.textContent =
+                        "Blueskyでログインしてください";
+
+                    return await waitForBlueskyLogin(
+                        loginWindow
+                    );
+                }
+
+
+                async function savePrivateScore() {
+
+                    return await fetch(
+                        PRIVATE_SCORE_API +
+                        "/api/my-scores",
+                        {
+                            method: "POST",
+                            credentials: "include",
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+                            body: JSON.stringify({
+                                game: "escape",
+                                score
+                            })
+                        }
+                    );
+                }
+
+
+                rankingSubmitBtn.addEventListener(
+                    "click",
+                    event => {
+
+                        event.preventDefault();
+
+                        const url =
+                            PRIVATE_SCORE_API +
+                            "/?game=escape&view=mine&score=" +
+                            encodeURIComponent(score);
+
+                        window.location.href = url;
+                    }
+                );
+
+
+                personalHistoryBtn.addEventListener("click", () => {
+                    window.open(
+                        "https://ohagi-ranking.makimaki-feed.net/?game=escape&view=mine",
+                        "_blank",
+                        "noopener,noreferrer"
+                    );
+                });
+
+                function endGame() {
+                    playing = false;
+
+                    bgm.pause();
+                    bgm.currentTime = 0;
+
+                    gameOverSound.currentTime = 0;
+                    gameOverSound.play().catch(error => {
+                        console.warn("ゲームオーバー音を再生できませんでした", error);
+                    });
+
+                    // 回避アニメーションを解除してから命中アニメーション
+                    player.classList.remove("dodge");
+                    player.classList.remove("hit");
+                    void player.offsetWidth;
+                    player.classList.add("hit");
+
+                    setTimeout(() => {
+                        gameOverScreen.style.display = "flex";
+
+                        rankingSubmitBtn.disabled =
+                            false;
+
+                        rankingSubmitBtn.textContent =
+                            "この記録を登録";
+
+                        rankingSubmitBtn.classList.remove(
+                            "is-saved"
+                        );
+
+                        rankingMessage.textContent =
+                            "";
+
+                        updateRankingLoginUI();
+
+                        result.textContent =
+                            score +
+                            "個のおはぎをかわした";
+                    }, 600);
+                }
+
+                /* =========================
+            描画
+         ========================= */
+
+                function update() {
+                    if (!playing) return;
+
+                    for (
+                        let i = ohagis.length - 1;
+                        i >= 0;
+                        i--
+                    ) {
+                        const o = ohagis[i];
+
+                        o.x += o.vx;
+                        o.y += o.vy;
+
+                        o.el.style.left =
+                            o.x + "px";
+
+                        o.el.style.top =
+                            o.y + "px";
+
+                        if (collision(o)) {
+                            endGame();
+                            return;
+                        }
+
+                        if (!o.passed) {
+                            const toPlayerX = playerX - o.x;
+                            const toPlayerY = playerY - o.y;
+
+                            const dot =
+                                toPlayerX * o.vx +
+                                toPlayerY * o.vy;
+
+                            if (dot < 0) {
+                                o.passed = true;
+
+                                score++;
+
+                                scoreText.textContent =
+                                    "かわしたおはぎ：" + score;
+
+                                player.classList.remove("dodge");
+                                void player.offsetWidth;
+                                player.classList.add("dodge");
+
+                                setTimeout(() => {
+                                    player.classList.remove("dodge");
+                                }, 160);
+                            }
+                        }
+                        const outside =
+                            o.x < -150 ||
+                            o.x > game.clientWidth + 150 ||
+                            o.y < -150 ||
+                            o.y > game.clientHeight + 150;
+
+                        if (outside) {
+                            o.el.remove();
+
+                            ohagis.splice(
+                                i,
+                                1
+                            );
+                        }
+                    }
+
+                    requestAnimationFrame(update);
+                }
+
+
+                /* =========================
+   ゲーム開始
+========================= */
+
+                function startGame() {
+
+                    if (playing) return;
+
+                    playing = true;
+                    startTime = performance.now();
+
+                    startScreen.style.display = "none";
+
+                    bgm.currentTime = 0;
+
+                    bgm.play().catch(error => {
+                        console.warn("BGMを再生できませんでした", error);
+                    });
+
+                    spawnLoop();
+
+                    /* まず4秒後に義勇を必ず出す */
+                    setTimeout(() => {
+
+                        if (!playing) return;
+
+                        giyuAttack();
+                        giyuLoop();
+
+                    }, 4000);
+
+                    update();
+                }
+
+                startButton.addEventListener(
+                    "click",
+                    startGame
+                );
+
+            </script>
+
+    </body>
+
+</html>

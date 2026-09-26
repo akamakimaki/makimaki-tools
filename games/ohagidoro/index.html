@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#dcebcf">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>おはぎDROP</title>
+
+    <script>
+        const isIPad =
+            /iPad/.test(navigator.userAgent) ||
+            (
+                navigator.platform === "MacIntel" &&
+                navigator.maxTouchPoints > 1
+            );
+
+        if (isIPad) {
+            document.documentElement.classList.add("ipad-mode");
+        }
+    </script>
+
+    <link rel="preload" href="sounds/bgm_main.wav" as="audio" type="audio/wav">
+    <link rel="preload" href="sounds/clear.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="sounds/giyu.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="sounds/gameover.mp3" as="audio" type="audio/mpeg">
+
+    <link rel="stylesheet" href="style.css?v=20260912-1">
+    <link rel="stylesheet" href="mobile.css?v=20260912-1">
+</head>
+
+<body>
+    <div id="startGate" class="start-gate">
+        <div class="start-gate-card">
+            <p class="start-gate-title">おはぎDROP</p>
+            <p class="start-gate-note">音が出ます</p>
+            <button id="startGameBtn" class="start-game-btn" type="button">はじめる</button>
+            <p class="music-credit">BGM「shinazugawaohagida」 提供：みなさん</p>
+        </div>
+    </div>
+
+    <main class="game-wrap">
+        <section class="game-panel" aria-label="おはぎDROP">
+            <h1 class="game-title">
+                <img class="game-title-image" src="images/title.png?v=20260912-2" alt="おはぎDROP">
+            </h1>
+
+            <div class="game-layout">
+                <aside class="character-panel">
+                    <div class="character-card tomioka-card">
+                        <div class="character-face-wrap">
+                            <img id="giyuFace" class="character-face" src="images/giyu-normal.png" alt="義勇">
+                            <div id="giyuEffects" class="character-effects" aria-hidden="true"></div>
+                        </div>
+                        <div id="giyuMessage" class="speech">…</div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="character-face-wrap">
+                            <img id="sanemiFace" class="character-face" src="images/sanemi-normal.png" alt="実弥">
+                            <div id="sanemiEffects" class="character-effects" aria-hidden="true"></div>
+                        </div>
+                        <div id="sanemiMessage" class="speech">おはぎィ？</div>
+                    </div>
+                </aside>
+
+                <section class="board-area">
+                    <canvas id="gameCanvas" width="300" height="600" aria-label="ゲーム盤"></canvas>
+
+                    <div id="eventMessage" class="event-message" aria-live="polite"></div>
+
+                    <div id="pausePanel" class="pause-panel hidden">
+                        <div class="pause-title">PAUSE</div>
+                        <div class="pause-text">休憩中</div>
+                    </div>
+
+                    <div id="gameOverPanel" class="game-over hidden">
+
+                        <div class="game-over-text">
+                            腹いっぱいだァ…
+                        </div>
+
+                        <div class="result-score">
+
+                            <div class="result-score-label">
+                                今回の記録
+                            </div>
+
+                            <div class="result-score-value">
+                                <span id="rankingScore">0</span>
+                                <span class="result-score-unit">点</span>
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="ranking-area">
+                            <div hidden>
+                                <input id="rankingName" class="ranking-name-input" type="text" placeholder="Blueskyハンドル"
+                                    maxlength="253">
+
+                                <div id="rankingLoginHint" class="ranking-login-hint">
+                                    初回のみ入力／ログイン後は入力不要です
+                                </div>
+                                <div id="rankingMessage" class="ranking-message"></div>
+                            </div>
+                            
+                            <button id="rankingSubmitBtn" class="ranking-submit-btn" type="button">
+                                この記録を登録
+                            </button>
+
+                            <button id="personalHistoryBtn" class="ranking-view-btn" type="button">
+                                自分の記録を見る
+                            </button>
+
+                            <div id="rankingMessage" class="ranking-message"></div>
+
+                        </div>
+
+
+
+                        <button id="restartBtn" type="button">
+                            もう一回
+                        </button>
+
+                        <button id="blueskyShareBtn" class="bluesky-share-btn" type="button">
+                            Blueskyで結果を投稿
+                        </button>
+
+                    </div>
+
+                </section>
+
+                <aside class="info-panel">
+                    <div class="hud-block score-block">
+                        <div class="hud-label">SCORE</div>
+                        <div id="score" class="score-value">0</div>
+                    </div>
+
+                    <div class="hud-block fever-block">
+                        <div class="fever-header">
+                            <div class="hud-label">FEVER</div>
+                            <div id="feverValue">0%</div>
+                        </div>
+                        <div class="fever-bar">
+                            <div id="feverBarFill" class="fever-bar-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="hud-block next-block">
+                        <div class="hud-label">NEXT</div>
+                        <canvas id="nextCanvas" width="108" height="108"></canvas>
+                    </div>
+
+                    <div class="controls">
+                        <button id="pauseBtn" class="pause-btn" type="button">PAUSE</button>
+                        <div class="key-help"><span>← →</span>移動</div>
+                        <div class="key-help"><span>↓</span>落とす</div>
+                        <div class="key-help"><span>↑ / SPACE</span>回転</div>
+                    </div>
+
+                    <div class="music-credit">
+                        BGM「shinazugawaohagida」<br>
+                        提供：みなさん
+                    </div>
+                </aside>
+            </div>
+
+            <div class="mobile-controls" aria-label="スマホ操作">
+                <div class="move-pad">
+                    <button type="button" data-action="left" aria-label="左">←</button>
+                    <button type="button" data-action="down" aria-label="下">↓</button>
+                    <button type="button" data-action="right" aria-label="右">→</button>
+                </div>
+                <button class="rotate-button" type="button" data-action="rotate" aria-label="回転">↻</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="startMessage" class="start-message">始まるぞォ！</div>
+
+    <div id="waterFlash" class="water-flash" aria-hidden="true"></div>
+    <div id="waterEffects" class="water-effects" aria-hidden="true"></div>
+
+    <div id="giyuAttackOverlay" class="giyu-attack-overlay" aria-hidden="true">
+        <img src="images/giyu-attack.png" alt="">
+    </div>
+
+    <div id="giyuAttackMessage" class="giyu-attack-message" aria-hidden="true">
+        <span class="water-slash">≋</span>
+        <span id="giyuAttackMessageText" class="giyu-attack-message-text">追加だ</span>
+        <span class="water-slash">≋</span>
+    </div>
+
+    <div id="feverStartMessage" class="fever-start-message" aria-hidden="true">
+        <span class="ohagi-mark">●</span>
+        <span class="festival-text">おはぎ祭り！！</span>
+        <span class="ohagi-mark">●</span>
+    </div>
+
+    <div id="sanemiGameOverOverlay" class="sanemi-gameover-overlay" aria-hidden="true">
+        <img src="images/sanemi-gameover.png" alt="">
+    </div>
+
+    <audio id="bgmMain" src="sounds/bgm_main.wav" preload="auto"></audio>
+    <audio id="clearSe" src="sounds/clear.mp3" preload="auto"></audio>
+    <audio id="giyuSe" src="sounds/giyu.mp3" preload="auto"></audio>
+    <audio id="gameOverSe" src="sounds/gameover.mp3" preload="auto"></audio>
+
+    <script src="game.js?v=20260912-3"></script>
+</body>
+
+</html>
