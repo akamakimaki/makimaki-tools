@@ -452,11 +452,3 @@ a {
         flex-basis: 52px;
     }
 }
-
-@media (max-width: 639px) {
-    .feed-icon {
-        width: 52px;
-        height: 52px;
-        flex-basis: 52px;
-    }
-}
