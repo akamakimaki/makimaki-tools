@@ -1,11 +1,15 @@
-const CACHE_NAME = "makimaki-tools-v1";
+const CACHE_NAME = "makimaki-tools-v2";
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
-  "./manifest.webmanifest"
+  "./manifest.webmanifest",
+  "./policy.html",
+  "./images/header.png",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
