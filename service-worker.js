@@ -1,4 +1,4 @@
-const CACHE_NAME = "makimaki-tools-v4";
+const CACHE_NAME = "makimaki-tools-v5";
 
 const APP_SHELL = [
     "./",
