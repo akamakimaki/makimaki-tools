@@ -1,9 +1,9 @@
-const CACHE_NAME = "makimaki-tools-v5";
+const CACHE_NAME = "makimaki-tools-v6";
 
 const APP_SHELL = [
     "./",
     "./index.html",
-    "./style.css",
+    "./style.css?v=20260929-1",
     "./app.js",
     "./manifest.webmanifest",
     "./policy.html",
