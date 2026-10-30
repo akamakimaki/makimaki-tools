@@ -1,0 +1,36 @@
+/* Makimaki Tools - Bluesky Share Button */
+:root {
+  --makimaki-bsky-blue: #0085ff;
+  --makimaki-bsky-hover: #006ed6;
+}
+
+.makimaki-bsky-button {
+  background: var(--makimaki-bsky-blue);
+  color: #ffffff;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+.makimaki-bsky-button:hover {
+  background: var(--makimaki-bsky-hover);
+}
+
+.makimaki-bsky-button:focus-visible {
+  outline: 3px solid #8bc6ff;
+  outline-offset: 3px;
+}
+
+/* 共通ボタンの色を最優先 */
+button.makimaki-bsky-button,
+a.makimaki-bsky-button {
+  background-color: #0085ff !important;
+  color: #ffffff !important;
+}
+
+button.makimaki-bsky-button:hover,
+a.makimaki-bsky-button:hover {
+  background-color: #006ed6 !important;
+}

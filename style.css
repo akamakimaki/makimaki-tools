@@ -246,10 +246,6 @@ a {
     object-fit: contain;
 }
 
-/*
- * おはぎPUSHはリンクカード画像をそのまま表示する。
- * OGP画像の左右を切らないようcontainで収める。
- */
 
 .game-card-footer {
     display: flex;
@@ -266,7 +262,7 @@ a {
 
 @media (min-width: 640px) {
     .game-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .game-visual {
@@ -276,22 +272,6 @@ a {
     .game-character {
         max-width: 85%;
         max-height: 170px;
-    }
-
-
-
-
-    /*
- * 十分に横幅があるPCだけ4枚横並びにする。
- */
-    @media (min-width: 1000px) {
-        .game-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .game-link-card {
-            min-height: 210px;
-        }
     }
 }
 
@@ -311,17 +291,6 @@ a {
     filter: drop-shadow(0 2px 3px rgb(255 255 255 / 95%));
 }
 
-/*
- * PUSHのロゴは横長なので、ほかのロゴより幅を広く取る。
- */
-.game-title-logo.push-title-logo {
-    right: 8px;
-    bottom: 8px;
-
-    width: 58%;
-    max-width: none;
-    max-height: 68px;
-}
 
 .policy-header {
     margin-bottom: 28px;
@@ -529,4 +498,28 @@ a {
 .record-link:focus-visible {
     outline: 3px solid #222;
     outline-offset: 3px;
+}
+
+
+/* おはぎPUSHカード */
+.game-title-logo.push-title-logo {
+    right: 8px;
+    bottom: 8px;
+    width: 58%;
+    max-width: none;
+    max-height: 68px;
+}
+
+/* タブレットは2列 */
+@media (min-width: 640px) and (max-width: 999px) {
+    .game-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* PCは4列 */
+@media (min-width: 1000px) {
+    .game-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
 }

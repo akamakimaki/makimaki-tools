@@ -1,9 +1,9 @@
-const CACHE_NAME = "makimaki-tools-v6";
+const CACHE_NAME = "makimaki-tools-v7";
 
 const APP_SHELL = [
     "./",
     "./index.html",
-    "./style.css?v=20260929-1",
+    "./style.css?v=20261009-1",
     "./app.js",
     "./manifest.webmanifest",
     "./policy.html",
@@ -14,7 +14,9 @@ const APP_SHELL = [
     "./images/pwa-wide.png",
     "./icons/shortcut-ohaginige.png",
     "./icons/shortcut-drop.png",
-    "./icons/shortcut-kiss.png"
+    "./icons/shortcut-kiss.png",
+    "./images/ohagi-push-giyusane.png",
+    "./images/title-push.png"
 ];
 
 self.addEventListener("install", (event) => {
